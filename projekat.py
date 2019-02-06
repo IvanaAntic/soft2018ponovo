@@ -150,14 +150,17 @@ model = tf.keras.models.load_model('model/model2.h5')
 
 results = []
 
-for i in range(10):
+videos = range(8, 10)
+for video in videos:
+    cap = cv2.VideoCapture('videos/video-{0}.avi'.format(video))
+#for i in range(10):
     # if not i == 0:
     #     continue
-
-    video_name = 'video-' + str(i) + '.avi'
-    path_to_video = 'videos/' + video_name
-    cap = cv2.VideoCapture(path_to_video)
-    cap2 = cv2.VideoCapture("videos/video-9.avi")
+    #i=3
+    video_name = 'video-' + str(video) + '.avi'
+    #path_to_video = 'videos/' + video_name
+    #cap = cv2.VideoCapture(path_to_video)
+    #cap2 = cv2.VideoCapture("videos/video-9.avi")
     #ret, frame = cap.read()
     frame_num = 0
     #b, g, r = cv2.split(frame)
@@ -201,13 +204,13 @@ for i in range(10):
         cv2.imshow('frame2', frame)
 
         if cv2.waitKey(1) == 30:
-            break
+           break
 
-    results.append('video-{0}.avi\t{1}\n'.format(i, sum_digits))
+    results.append('video-{0}.avi\t{1}\n'.format(video, sum_digits))
     print(frame_num)
     print(video_name)
     print(sum_digits)
-
+    cap.release()
 #  sum = get_sum_of_digits(path_to_video)
 #  prediction_results.append({ 'video': video_name, 'sum': sum })
 
@@ -218,6 +221,5 @@ with open('out.txt', 'w') as file:
 file.close()
 os.system('python test.py')
 print(evens)
-cap2.release()
+#cap2.release()
 cv2.destroyAllWindows()
-cv2.imwrite('houghlines66.jpg', img)
