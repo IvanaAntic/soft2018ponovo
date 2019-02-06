@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 from vector import *
-
+import os
 from scipy import ndimage
 from load import model_create
 import tensorflow as tf
@@ -86,12 +86,12 @@ def select_roi(image_orig, image_bin):
         area = cv2.contourArea(contour)
 
         cv2.rectangle(image_orig, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        if area > 6 and h < 48 and h > 10 and w > 2:
+        if area > 6 and h < 48 and h > 4 and w > 2:
             center = (x + w / 2, y + h / 2)
             # kopirati [y:y+h+1, x:x+w+1] sa binarne slike i smestiti u novu sliku
             # označiti region pravougaonikom na originalnoj slici (image_orig) sa rectangle funkcijom
             #image_bin = cv2.medianBlur(image_bin, 5)
-            region = image_bin[y-16:y + 30, x-16:x + 30]
+            region = image_bin[y-7:y + h + 7, x-7:x + w+ 7]
 
             lines = houghLinesTransformation(image_orig)
             if lines is not None:
@@ -108,8 +108,8 @@ def select_roi(image_orig, image_bin):
 
                             #print(dist)
                             #print(regions_array)
-                            cv2.imshow('imgreg', region)
-                            cv2.waitKey(0)
+                            #cv2.imshow('imgreg', region)
+                            #cv2.waitKey(0)
 
                             regions_array.append([resize_region(region), (x, y, w, h)])
 
@@ -148,18 +148,19 @@ cv2.imwrite('houghlines66.jpg', img)
 #ucitavanje modela
 model = tf.keras.models.load_model('model/model2.h5')
 
-
+results = []
 
 for i in range(10):
     # if not i == 0:
     #     continue
+
     video_name = 'video-' + str(i) + '.avi'
     path_to_video = 'videos/' + video_name
     cap = cv2.VideoCapture(path_to_video)
-    cap2 = cv2.VideoCapture("videos/video-2.avi")
-    ret, frame = cap.read()
+    cap2 = cv2.VideoCapture("videos/video-9.avi")
+    #ret, frame = cap.read()
     frame_num = 0
-    b, g, r = cv2.split(frame)
+    #b, g, r = cv2.split(frame)
     print(video_name)
 
     konacno = []
@@ -202,14 +203,21 @@ for i in range(10):
         if cv2.waitKey(1) == 30:
             break
 
+    results.append('video-{0}.avi\t{1}\n'.format(i, sum_digits))
     print(frame_num)
     print(video_name)
     print(sum_digits)
-    cap.release()
-    cv2.destroyAllWindows()
-    #  sum = get_sum_of_digits(path_to_video)
-    #  prediction_results.append({ 'video': video_name, 'sum': sum })
 
+#  sum = get_sum_of_digits(path_to_video)
+#  prediction_results.append({ 'video': video_name, 'sum': sum })
 
+with open('out.txt', 'w') as file:
+    file.write('RA 70/2014 Ivana Antic\nfile\tsum\n')
+    for res in results:
+        file.write(res)
+file.close()
+os.system('python test.py')
 print(evens)
+cap2.release()
+cv2.destroyAllWindows()
 cv2.imwrite('houghlines66.jpg', img)
