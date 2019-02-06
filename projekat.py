@@ -103,8 +103,8 @@ def select_roi(image_orig, image_bin):
                     #print(dist)
                     #cv2.imshow('imgreg', region)
                     #cv2.waitKey(0)
-                    if dist < 10 and r==1:
-                        if(inRange(20, contour)==False):
+                    if dist < 6 and r==1:
+                        if(inRange(18, contour)==False):
 
                             #print(dist)
                             #print(regions_array)
